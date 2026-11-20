@@ -1,4 +1,49 @@
 body {
     background: linear-gradient(#79A6FF, #2f4040);
     background-repeat: no-repeat;
+    display: flex;
+    align-items: right;
+}
+
+
+#followsquare {
+    background: slategray;
+    height: 100px;
+    width: 200px;
+    opacity: 0;
+    position: fixed;
+    transition: opacity 0.3s;
+    z-index: 100;
+    padding: 10px;
+    border: 3px solid black;
+    border-radius: 20px;
+    box-shadow: 5px 10px black;
+}
+
+#name {
+    text-align: center;
+    top: 5%;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+  }
+  .spinning {
+    animation: spin 1s linear infinite;
+    align-self: center;
+    width: 30px;
+    height: 30px;
+    transition: opacity 0.3s;
+}
+
+#site {
+    font-size: 130px;
+    text-align: center;
+    position: fixed;
+    left: 55%;
+    width: 35%;
+    background: whitesmoke;
+    border: 5px solid black;
+    border-radius: 30px;
+    box-shadow: 5px 10px black;
 }

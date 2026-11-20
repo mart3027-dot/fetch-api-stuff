@@ -1,3 +1,5 @@
+
+
 function MoveObj(image, leftPos, upPos, startPosLeft, startPosHeight) {
     image.width = 100;
     image.height = 100;
@@ -153,6 +155,37 @@ function Eval(url, image, b) {
             image.src = image.src = url + "minecraft:deepslate_diamond_ore/render.png";
         }
     }
+    var newstr = image.src.replace(url, "");
+    newstr = newstr.replace("/render.png", "");
+    image.dataset.blocktype = newstr;
+    console.log(image.dataset.blocktype);
+}
+
+let hasFetched = false;
+
+async function OnOver() {
+
+    if (hasFetched) return;
+    hasFetched = true;
+
+    try {
+        const element = document.getElementById("spinimg");
+        element.style.opacity = 1;
+        const response = await fetch("https://blocksitems.com/api/v2/blocks/" + event.currentTarget.dataset.blocktype);
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+        const data = await response.json();
+        element.style.opacity = 0;
+        const followsquare = document.getElementById("followsquare");
+        followsquare.style.opacity = 1;
+        console.log(data);
+        followsquare.firstElementChild.textContent = data["data"]["display_name"];
+        hasFetched = false;
+    } catch (error) {
+        console.error("Fetch failed:", error);
+        hasFetched = false; // Allow retry if needed
+    }
 }
 
 function CreateSquare(url, size, height) {
@@ -165,9 +198,11 @@ function CreateSquare(url, size, height) {
 
                 MoveObj(image, i - z, i + (z) + b * 2, 100 * (size / 2), 0);
 
-                if (b == height){
+                if (b == height) {
                     document.body.style.height = (parseInt(image.style.top, 10) + 100) + "px";
                 }
+
+                image.addEventListener("mouseover", async (event) => { OnOver() });
 
                 document.body.appendChild(image);
             }
@@ -175,6 +210,24 @@ function CreateSquare(url, size, height) {
     }
 }
 
+var mouseX = 0;
+var mouseY = 0;
+
 window.onload = function () {
-    CreateSquare('https://blocksitems.com/api/v2/blocks/', 8, 256);
+    const followsquare = document.getElementById("followsquare");
+    document.addEventListener('mousemove', function (event) {
+        console.log('Mouse X:', event.clientX, 'Mouse Y:', event.clientY);
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+        followsquare.style.left = (mouseX + 5) + 'px';
+        followsquare.style.top = (mouseY + 5) + 'px';
+        const element = document.elementFromPoint(event.clientX, event.clientY);
+        if (element.tagName == "BODY") {
+            followsquare.style.opacity = 0;
+        }
+        else {
+            console.log(element.tagName);
+        }
+    });
+    CreateSquare('https://blocksitems.com/api/v2/blocks/', 10, 256);
 }
